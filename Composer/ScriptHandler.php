@@ -2,11 +2,10 @@
 
 namespace ArturDoruch\JsVendorBundle\Composer;
 
-use Composer\Composer;
 use Composer\Package\Package;
 use Composer\Package\Version\VersionParser;
 use Composer\Script\Event;
-use Symfony\Component\Filesystem\Filesystem;
+use Composer\Util\Filesystem;
 
 /**
  * @author Artur Doruch <arturdoruch@interia.pl>
@@ -25,7 +24,8 @@ class ScriptHandler
 
         $targetDir = __DIR__ . '/../Resources/public/js';
 
-        $version = self::getVersion($composer);
+        //$version = self::getVersion($composer);
+        $version = '1.0.0';
         $versionParser = new VersionParser();
         $normalizedVersion = $versionParser->normalize($version);
 
@@ -48,17 +48,19 @@ class ScriptHandler
         );
 
         $fs = new Filesystem();
-        $fs->chmod($files, 0777, 0000, true);
-        $fs->remove($files);
+
+        foreach ($files as $file) {
+            $fs->remove($file);
+        }
     }
 
-    /**
+    /*
      * Gets JsBundle version.
      *
      * @param Composer $composer
      * @return string
      */
-    private static function getVersion(Composer $composer)
+    /*private static function getVersion(Composer $composer)
     {
         $packages = $composer->getRepositoryManager()->getLocalRepository()->findPackages('arturdoruch/js-vendor-bundle');
 
@@ -67,9 +69,8 @@ class ScriptHandler
         }
 
         $versionPaths = explode('.', $package->getPrettyVersion());
-        $versionPaths[0] = $versionPaths[0] - 1;
 
-        return implode('.', $versionPaths);
-    }
+        return sprintf('%s.%s.*', $versionPaths[0] - 1, $versionPaths[1]);
+    }*/
 
 }

@@ -29,7 +29,7 @@ Via composer. Add the following lines to your main composer.json file, "scripts"
 ```
 
 Install bundle by running cli command.
-```sh composer require "arturdoruch/js-vendor-bundle"```
+```composer require "arturdoruch/js-vendor-bundle"```
 
 Add ArturDoruchJsVendorBundle to your application kernel
 
@@ -44,5 +44,5 @@ public function registerBundles()
 }
 ```
 
-Install assets on Symfony 2 ```sh app/console assets:install --symlink```
-or on Symfony 3 ```sh bin/console assets:install --symlink```
+Install assets
+```console assets:install --symlink```

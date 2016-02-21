@@ -41,12 +41,15 @@ class ScriptHandler
         $downloader->download($package, $targetDir);
 
         // Remove unwanted files
+        $files = array(
+            $targetDir . '/.git',
+            $targetDir . '/.gitignore',
+            $targetDir . '/composer.json'
+        );
+
         $fs = new Filesystem();
-        $fs->remove(array(
-                $targetDir . '/.git',
-                $targetDir . '/.gitignore',
-                $targetDir . '/composer.json'
-            ));
+        $fs->chmod($files, 0777, 0000, true);
+        $fs->remove($files);
     }
 
     /**

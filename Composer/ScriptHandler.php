@@ -22,10 +22,14 @@ class ScriptHandler
     {
         $composer = $event->getComposer();
 
+        $version = '1.1.0';
         $targetDir = __DIR__ . '/../Resources/public/js';
 
-        //$version = self::getVersion($composer);
-        $version = '1.0.0';
+        if ($version === self::getInstalledVersion($targetDir)) {
+            //$event->getIO()->write('The JavaScript files from package arturdoruch/js-vendor v' . $version . ' are already installed.');
+            return;
+        }
+
         $versionParser = new VersionParser();
         $normalizedVersion = $versionParser->normalize($version);
 
@@ -36,9 +40,11 @@ class ScriptHandler
         $package->setSourceReference($version);
         $package->setSourceUrl('https://github.com/arturdoruch/JsVendor');
 
-        // Download the JsBundle
+        // Download the JsVendorBundle
         $downloader = $composer->getDownloadManager()->getDownloader('git');
         $downloader->download($package, $targetDir);
+
+        self::writePackageVersion($version, $targetDir);
 
         // Remove unwanted files
         $files = array(
@@ -54,23 +60,28 @@ class ScriptHandler
         }
     }
 
-    /*
-     * Gets JsBundle version.
+    /**
+     * @param string $targetDir
      *
-     * @param Composer $composer
-     * @return string
+     * @return null|string
      */
-    /*private static function getVersion(Composer $composer)
+    private static function getInstalledVersion($targetDir)
     {
-        $packages = $composer->getRepositoryManager()->getLocalRepository()->findPackages('arturdoruch/js-vendor-bundle');
-
-        if (!$package = array_shift($packages)) {
-            throw new \RuntimeException('The "js-vendor-bundle" package version could not be detected.');
+        if (!file_exists($filename = $targetDir . '/version.txt')) {
+            return null;
         }
 
-        $versionPaths = explode('.', $package->getPrettyVersion());
+        return trim(file_get_contents($filename));
+    }
 
-        return sprintf('%s.%s.*', $versionPaths[0] - 1, $versionPaths[1]);
-    }*/
-
+    /**
+     * Writes version of downloaded arturdoruch/js-vendor package into txt file.
+     *
+     * @param string $targetDir
+     * @param string $version
+     */
+    private static function writePackageVersion($version, $targetDir)
+    {
+        file_put_contents($targetDir . '/version.txt', $version);
+    }
 }
